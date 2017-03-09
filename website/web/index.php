@@ -1,5 +1,7 @@
 <?php
 
+use ihrname\Controller;
+
 error_reporting(E_ALL);
 
 require_once("../vendor/autoload.php");
@@ -7,14 +9,10 @@ $tmpl = new ihrname\SimpleTemplateEngine(__DIR__ . "/../templates/");
 
 switch($_SERVER["REQUEST_URI"]) {
 	case "/":
-		(new ihrname\Controller\IndexController($tmpl))->homepage();
+		(new Controller\IndexController($tmpl))->homepage();
 		break;
-	case "/test/upload":
-		if(file_put_contents(__DIR__ . "/../../upload/test.txt", "Mein erster Upload")) {
-			echo "It worked";
-		} else {
-			echo "Error happened";
-		}
+	case "/login":
+		(new Controller\LoginController($tmpl))->showLogin();
 		break;
 	default:
 		$matches = [];
