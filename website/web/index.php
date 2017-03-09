@@ -9,7 +9,9 @@ switch($_SERVER["REQUEST_URI"]) {
 	case "/":
 		(new ihrname\Controller\IndexController($tmpl))->homepage();
 		break;
-		
+	case "/testroute":
+		echo "Test";
+		break;
 	default:
 		$matches = [];
 		if(preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
