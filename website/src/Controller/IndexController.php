@@ -1,8 +1,8 @@
 <?php
 
-namespace ihrname\Controller;
+namespace rohrerj\Controller;
 
-use ihrname\SimpleTemplateEngine;
+use rohrerj\SimpleTemplateEngine;
 
 class IndexController 
 {
