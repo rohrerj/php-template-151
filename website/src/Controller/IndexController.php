@@ -20,10 +20,12 @@ class IndexController
   }
 
   public function homepage() {
-    echo "INDEX";
+    echo $this->template->render("home.html.php");
   }
 
   public function greet($name) {
   	echo $this->template->render("hello.html.php", ["name" => $name]);
+  	
   }
+
 }

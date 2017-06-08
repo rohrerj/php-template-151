@@ -27,6 +27,9 @@ class SimpleTemplateEngine
    */
   public function render($template, array $arguments = []) 
   {
+  	if($template != "main.html.php") {
+  		echo $this->render("main.html.php");
+  	}
     extract($arguments);
     ob_start();
     require($this->templatePath.$template);
