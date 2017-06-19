@@ -21,16 +21,16 @@ class Factory {
 				[\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION]);
 	}
 	public function GetLoginService() {
-		return new service\login\LoginPDOService($this->GetPDO());
+		return new service\login\LoginPDOService($this->GetPDO(),$this->getPasswordService());
 	}
 	public function GetLoginController() {
-		return new Controller\LoginController($this->GetTemplateEngine(),$this->GetLoginService());
+		return new Controller\LoginController($this->GetTemplateEngine(),$this->GetLoginService(),$this->getCSRFService(),$this->getMailer());
 	}
 	public function GetRegisterController() {
-		return new Controller\RegisterController($this->GetTemplateEngine(), $this->GetRegisterService());
+		return new Controller\RegisterController($this->GetTemplateEngine(), $this->GetRegisterService(),$this->getMailer(),$this->getCSRFService());
 	}
 	public function GetRegisterService() {
-		return new service\register\RegisterPDOService($this->GetPDO());
+		return new service\register\RegisterPDOService($this->GetPDO(),$this->getPasswordService());
 	}
 	public function getMailer()
 	{
@@ -39,5 +39,11 @@ class Factory {
 				->setUsername("gibz.module.151@gmail.com")
 				->setPassword("Pe$6A+aprunu")
 				);
+	}
+	public function getCSRFService() {
+		return new service\security\CSRFService();
+	}
+	public function getPasswordService() {
+		return new service\security\PasswordService();
 	}
 }

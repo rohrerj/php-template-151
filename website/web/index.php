@@ -6,8 +6,14 @@ require_once("../vendor/autoload.php");
 $config = parse_ini_file(__DIR__ . "/../config.ini",true);
 
 $factory = new rohrerj\Factory($config);
-
-switch($_SERVER["REQUEST_URI"]) {
+$uri = $_SERVER["REQUEST_URI"];
+if (strpos($uri, '?') !== false) {
+	$uri = substr($uri, 0,strpos($uri, '?'));
+}
+if($_SERVER["REQUEST_METHOD"] == "PUT") {
+	die();
+}
+switch($uri) {
 	case "/":
 		$factory->GetIndexController()->homepage();
 		break;
@@ -35,6 +41,26 @@ switch($_SERVER["REQUEST_URI"]) {
 		}
 		break;
 	}
+	case "/activate": {
+		$cnt = $factory->GetRegisterController();
+		if($_SERVER["REQUEST_METHOD"] == "GET") {
+			$cnt->showSetPassword($_GET);
+		}
+		else {
+			$cnt->setPassword($_POST);
+		}
+		break;
+	}
+	case "/forgotPassword": {
+		$cnt = $factory->GetLoginController();
+		if($_SERVER["REQUEST_METHOD"] == "GET") {
+			$cnt->showForgotPassword();
+		}
+		else {
+			$cnt->forgotPassword($_POST);
+		}
+		break;
+	}
 	default:
 		$matches = [];
 		if(preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
@@ -42,4 +68,5 @@ switch($_SERVER["REQUEST_URI"]) {
 			break;
 		}
 		echo "Not Found";
+		echo $uri;
 }

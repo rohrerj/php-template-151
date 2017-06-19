@@ -1,12 +1,6 @@
-<!--<form Method="post">
-	<label>Email</label><input type="text" name="email" value="<?= (isset($email)) ? $email: ""?>">
-	<label>Password</label><input type="password" name="password">
-	<br>
-	<input type="submit">
-</form>
-
--->
+<!--Protected for CSRF-->
 <form Method='post'>
+<?php echo $csrf?>
 	<table>
 		<tr>
 			<td><label>Email</label></td>
@@ -22,6 +16,4 @@
 	</table>
 	
 </form>
-<!--
-
--->
+<a href="/forgotPassword">Password vergessen</a>
