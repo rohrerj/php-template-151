@@ -70,9 +70,8 @@ class FileController {
 					$id = $this->fileService->uploadFile($_SESSION["email"], $name, $data["dir"]);
 					if($id != 0) {
 						$path = $_SERVER['DOCUMENT_ROOT']."../../files/".$id.".dat";
-						$path = realpath($path);
-						if (move_uploaded_file($_FILES["file"]["tmp_name"], $path)) {
-							echo "HTTP/1.1 200 OK";
+						if (move_uploaded_file($files["file"]["tmp_name"], $path)) {
+							header("Location: /?dir=".$data["dir"]);
 						}
 						
 						return;
