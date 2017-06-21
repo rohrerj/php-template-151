@@ -46,4 +46,10 @@ class Factory {
 	public function getPasswordService() {
 		return new service\security\PasswordService();
 	}
+	public function getFileController() {
+		return new Controller\FileController($this->GetTemplateEngine(),$this->getFileService(),$this->getCSRFService());
+	}
+	public function getFileService() {
+		return new service\file\FilePDOService($this->GetPDO());
+	}
 }

@@ -15,7 +15,18 @@ if($_SERVER["REQUEST_METHOD"] == "PUT") {
 }
 switch($uri) {
 	case "/":
-		$factory->GetIndexController()->homepage();
+		if(isset($_SESSION["email"])) {
+			$cnt = $factory->getFileController();
+			if($_SERVER["REQUEST_METHOD"] == "GET") {
+				$cnt->showFiles($_GET);
+			}
+			else {
+				$cnt->showFiles($_POST);
+			}
+		}
+		else {
+			$factory->GetIndexController()->homepage();
+		}
 		break;
 	case "/login":
 		$cnt = $factory->GetLoginController();
@@ -58,6 +69,25 @@ switch($uri) {
 		}
 		else {
 			$cnt->forgotPassword($_POST);
+		}
+		break;
+	}
+	case "/download": {
+		if(isset($_SESSION["email"])) {
+			$cnt = $factory->getFileController();
+			if($_SERVER["REQUEST_METHOD"] == "GET") {
+				$cnt->downloadFile($_GET);
+			}
+		}
+		
+		break;
+	}
+	case "/delete": {
+		if(isset($_SESSION["email"])) {
+			$cnt = $factory->getFileController();
+			if($_SERVER["REQUEST_METHOD"] == "POST") {
+				$cnt->delete($_POST);
+			}
 		}
 		break;
 	}

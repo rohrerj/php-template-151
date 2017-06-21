@@ -40,7 +40,7 @@ class RegisterController {
 			$this->showRegister();
 		}
 		else {
-				
+			
 			$url = $this->registerService->register($data["email"], $data["vorname"], $data["nachname"]);
 			if($url != null) {
 				$this->mailer->send(

@@ -8,8 +8,7 @@ services:
       - upload:/var/www/upload/upload:ro
       - ${PWD}/ssl:/etc/nginx/ssl
       - ${PWD}/website/web:/var/www/html:ro
-      - ${PWD}/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ${PWD}/website/files:/var/www/files:rw
+      - ${PWD}/nginx.conf:/etc/nginx/conf.d/default.conf:ro 
     ports:
       - 80:80
       - 443:443
@@ -26,7 +25,6 @@ services:
       - upload:/var/www/upload
       - ${PWD}/website:/var/www/php
       - ${PWD}/php.ini:/usr/local/etc/php/php.ini
-      - ${PWD}/website/files:/var/www/files:rw
     working_dir: /var/www/php
     user: www-data
     links:
