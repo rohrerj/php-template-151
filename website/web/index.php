@@ -73,7 +73,7 @@ switch($uri) {
 		break;
 	}
 	case "/download": {
-		if(isset($_SESSION["email"])) {
+		if(isset($_SESSION["email"])) {//isLoggedIn
 			$cnt = $factory->getFileController();
 			if($_SERVER["REQUEST_METHOD"] == "GET") {
 				$cnt->downloadFile($_GET);
@@ -83,10 +83,28 @@ switch($uri) {
 		break;
 	}
 	case "/delete": {
-		if(isset($_SESSION["email"])) {
+		if(isset($_SESSION["email"])) {//isLoggedIn
 			$cnt = $factory->getFileController();
 			if($_SERVER["REQUEST_METHOD"] == "POST") {
 				$cnt->delete($_POST);
+			}
+		}
+		break;
+	}
+	case "/create": {//create folder
+		if(isset($_SESSION["email"])) {//isLoggedIn
+			$cnt = $factory->getFileController();
+			if($_SERVER["REQUEST_METHOD"] == "POST") {
+				$cnt->create($_POST);
+			}
+		}
+		break;
+	}
+	case "/upload": {//upload files
+		if(isset($_SESSION["email"])) {//isLoggedIn
+			$cnt = $factory->getFileController();
+			if($_SERVER["REQUEST_METHOD"] == "POST") {
+				$cnt->upload($_POST,$_FILES);
 			}
 		}
 		break;

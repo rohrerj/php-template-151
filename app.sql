@@ -8,7 +8,7 @@ SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 DROP TABLE IF EXISTS `dokument`;
 CREATE TABLE `dokument` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `Name` varchar(50) NOT NULL,
+  `Name` varchar(255) NOT NULL,
   `Directory` varchar(255) NOT NULL,
   `CreationDate` datetime NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP,
   `Exists` bit(1) NOT NULL DEFAULT b'1',
@@ -53,7 +53,7 @@ CREATE TABLE `user` (
   `Email` varchar(40) NOT NULL,
   `Password` varchar(60) NOT NULL,
   `Active` bit(1) NOT NULL DEFAULT b'0',
-  `ActivativationURL` varchar(40) NOT NULL,
+  `ActivationURL` varchar(40) NOT NULL,
   PRIMARY KEY (`Id`),
   KEY `UserLevel` (`UserLevel`),
   CONSTRAINT `user_ibfk_1` FOREIGN KEY (`UserLevel`) REFERENCES `userLevel` (`Id`) ON DELETE NO ACTION ON UPDATE NO ACTION
@@ -71,4 +71,4 @@ INSERT INTO `userLevel` (`Id`, `Level`) VALUES
 (1,	'admin'),
 (2,	'user');
 
--- 2017-06-11 08:15:48
+-- 2017-06-11 08:24:34

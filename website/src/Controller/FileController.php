@@ -25,6 +25,8 @@ class FileController {
 			echo $this->template->render("files.html.php",["files" => $files, "dir" => $dir,"csrf" => $this->csrfService->getHtmlCode("csrfShowFiles")]);
 		}
 	}
+	//ajax method
+	//$data = csrf,file
 	public function delete(array $data) {
 		if(array_key_exists("csrf", $data)) {
 			if(!$this->csrfService->validateToken("csrfShowFiles", $data["csrf"])) {
@@ -48,6 +50,65 @@ class FileController {
 		
 		
 		
+	}
+	//$data = dir
+	public function upload(array $data, array $files) {
+		if(array_key_exists("csrf", $data)) {
+			if(!$this->csrfService->validateToken("csrfShowFiles", $data["csrf"])) {
+				echo "invalid csrf token";
+				return;
+			}
+		}
+		else {
+			echo "csrf token not set";
+			return;
+		}
+		if($_SESSION["email"] != null) {
+			if(array_key_exists("dir",$data) && $data["dir"]!="" && array_key_exists("file",$files)&&$files["file"]["name"] != "") {
+				$name = $files["file"]["name"];
+				if(preg_match("/^[a-zA-Z0-9_.-]*$/",$name)) {
+					$id = $this->fileService->uploadFile($_SESSION["email"], $name, $data["dir"]);
+					if($id != 0) {
+						$path = $_SERVER['DOCUMENT_ROOT']."../../files/".$id.".dat";
+						$path = realpath($path);
+						if (move_uploaded_file($_FILES["file"]["tmp_name"], $path)) {
+							echo "HTTP/1.1 200 OK";
+						}
+						
+						return;
+					}
+				}
+			}
+		}
+		echo "command not processed";
+	}
+	
+	
+	//ajax method
+	//$data = csrf,name,dir
+	public function create(array $data) {
+		if(array_key_exists("csrf", $data)) {
+			if(!$this->csrfService->validateToken("csrfShowFiles", $data["csrf"])) {
+				echo "invalid csrf token";
+				return;
+			}
+		}
+		else {
+			echo "csrf token not set";
+			return;
+		}
+		
+		if($_SESSION["email"] != null) {
+			if(array_key_exists("name",$data) && $data["name"]!="" && array_key_exists("dir",$data) && $data["dir"]!="") {
+				if(preg_match("/^[a-zA-Z0-9_-]*$/",$data["name"])) {
+					if($this->fileService->createFolder($_SESSION["email"],$data["name"],$data["dir"])) {
+						echo "HTTP/1.1 200 OK";
+						return;
+					}
+				}
+			}
+		}
+		echo "command not processed";
 	}
 	public function downloadFile(array $data) {
 		
