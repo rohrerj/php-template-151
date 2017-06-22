@@ -52,22 +52,22 @@ if($dir != "/") {
 }
 for($i=0; $i<count($files);$i++) {
 	if (strpos($files[$i][1], '/') === 0){//folder
-		echo "<tr><td><a href='?dir=".$files[$i][1]."'>".substr($files[$i][1],strripos($files[$i][1],"/"))."</a></td><td>".$files[$i][2]."</td>";
+		echo "<tr><td><a href='?dir=".htmlentities($files[$i][1])."'>".htmlentities(substr($files[$i][1],strripos($files[$i][1],"/")))."</a></td><td>".htmlentities($files[$i][2])."</td>";
 		if($files[$i][2] == "Owner" || $files[$i][2] == "ReadWrite") {
-			echo "<td><input type='button' onClick='deleteClick(".$files[$i][0].")' value='delete'></td>";
+			echo "<td><input type='button' onClick='deleteClick(".htmlentities($files[$i][0]).")' value='delete'></td>";
 		}
 		if($files[$i][2] == "Owner") {
-			echo "<td><input type='button' value='share' onClick='shareClick(".$files[$i][0].",\"".$files[$i][1]."\")'></td>";
+			echo "<td><input type='button' value='share' onClick='shareClick(".htmlentities($files[$i][0]).",\"".htmlentities($files[$i][1])."\")'></td>";
 		}
 		echo "</tr>";
 	}
 	else {//file
-		echo "<tr><td><a href='/download?file=".$files[$i][0]."'>".$files[$i][1]."</a></td><td>".$files[$i][2]."</td>";
+		echo "<tr><td><a href='/download?file=".htmlentities($files[$i][0])."'>".htmlentities($files[$i][1])."</a></td><td>".htmlentities($files[$i][2])."</td>";
 		if($files[$i][2] == "Owner" || $files[$i][2] == "ReadWrite") {
-			echo "<td><input type='button' onClick='deleteClick(".$files[$i][0].")' value='delete'></td>";
+			echo "<td><input type='button' onClick='deleteClick(".htmlentities($files[$i][0]).")' value='delete'></td>";
 		}
 		if($files[$i][2] == "Owner") {
-			echo "<td><input type='button' value='share' onClick='shareClick(".$files[$i][0].",\"".$files[$i][1]."\")'></td>";
+			echo "<td><input type='button' value='share' onClick='shareClick(".htmlentities($files[$i][0]).",\"".htmlentities($files[$i][1])."\")'></td>";
 		}
 		echo "</tr>";
 	}
@@ -77,7 +77,7 @@ for($i=0; $i<count($files);$i++) {
 <tr>
 	<td>Create Folder</td>
 	<td><input type="text" id="folderName"></td>
-	<td><input type="button" value="Create" <?php echo "onClick=createClick('".$dir."')"?>></td>
+	<td><input type="button" value="Create" <?php echo "onClick=createClick('".htmlentities($dir)."')"?>></td>
 </tr>
 </table>
 </fieldset>
@@ -88,7 +88,7 @@ for($i=0; $i<count($files);$i++) {
 		<h5>Upload File</h5>
 		<form method='POST' action="/upload" enctype="multipart/form-data" >
 			<?php echo $csrf?>
-			<input type="hidden" name="dir" value=<?php echo $dir?>>
+			<input type="hidden" name="dir" value=<?php echo htmlentities($dir)?>>
 			<table>
 				<tr>
 					<td><input type="file" name="file"></td>
@@ -105,7 +105,7 @@ for($i=0; $i<count($files);$i++) {
 		<h5>Share File</h5>
 		<form method="POST" action="/share">
 			<input type="hidden" id="sharedFileId" name="sharedFileId">
-			<input type="hidden" name="dir" value=<?php echo $dir?>>
+			<input type="hidden" name="dir" value=<?php echo htmlentities($dir)?>>
 			<?php echo $csrf?>
 			<table>
 				<tr>

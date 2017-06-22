@@ -18,15 +18,15 @@ class AdminPDOService implements AdminService {
 		if($cmd == "select") {
 			$hasResults = true;
 		}
-		$stmt = $this->pdo->prepare($query);
 		try {
+			$stmt = $this->pdo->prepare($query);
 			$stmt->execute();
 			if($hasResults && $stmt->rowCount()>0) {
 				return $stmt->fetchAll($this->pdo::FETCH_NUM);
 			}
 		}
 		catch(Exception $ex) {
-			return $ex;
+			return array(array());
 		}
 		
 	}

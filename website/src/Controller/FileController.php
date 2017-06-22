@@ -157,6 +157,7 @@ class FileController {
 				$sharedType = $data["sharedType"];
 				switch($sharedType) {
 					case "Read":
+					case "Non Share":
 					case "ReadWrite": {
 						break;
 					}
@@ -164,9 +165,10 @@ class FileController {
 						return;
 					}
 				}
-				if($this->fileService->share($_SESSION["email"],$data["sharedFileId"],$data["sharedUserEmail"],$data["sharedType"])) {
-					header("Location: /?dir=".$data["dir"]);
+				if($_SESSION["email"] != $data["sharedUserEmail"]) {
+					$this->fileService->share($_SESSION["email"],$data["sharedFileId"],$data["sharedUserEmail"],$data["sharedType"]);
 				}
+				header("Location: /?dir=".$data["dir"]);
 			}
 			
 		}

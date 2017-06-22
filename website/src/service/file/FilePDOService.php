@@ -149,31 +149,40 @@ class FilePDOService implements FileService {
 	public function share($email,$sharedFileId,$sharedUserEmail,$sharedType) {
 		if($this->checkFileAccess($email, $sharedFileId, "Owner")) {
 			$userId = $this->getUserIdForEmail($sharedUserEmail);
-			$freigabeId = $this->getFreigabeIdForName($sharedType);
 			if($userId != 0) {
-				$stmt = $this->pdo->prepare("select Id from Freigabe where UserId=? and DokumentId=?");
-				$stmt->bindValue(1, $userId);
-				$stmt->bindValue(2, $sharedFileId);
-				$stmt->execute();
-				if($stmt->rowCount()==1) {
-					$stmt2 = $this->pdo->prepare("update Freigabe set FreigabeLevel=? where UserId=? and DokumentId=?");
-					$stmt2->bindValue(1, $freigabeId);
-					$stmt2->bindValue(2, $userId);
-					$stmt2->bindValue(3, $sharedFileId);
-					$stmt2->execute();
-					if($stmt2->rowCount() == 1) {
-						return true;
-					}
+				if($sharedType == "Non Share") {
+					$stmt = $this->pdo->prepare("delete from Freigabe where UserId=? and DokumentId=?");
+					$stmt->bindValue(1, $userId);
+					$stmt->bindValue(2, $sharedFileId);
+					$stmt->execute();
 				}
 				else {
-					$stmt2 = $this->pdo->prepare("insert into Freigabe(UserId,DokumentId,FreigabeLevel) values(?,?,?)");
-					$stmt2->bindValue(1, $userId);
-					$stmt2->bindValue(2, $sharedFileId);
-					$stmt2->bindValue(3, $freigabeId);
-					$stmt2->execute();
-					if($stmt2->rowCount() == 1) {
-						return true;
+					$freigabeId = $this->getFreigabeIdForName($sharedType);
+					$stmt = $this->pdo->prepare("select Id from Freigabe where UserId=? and DokumentId=?");
+					$stmt->bindValue(1, $userId);
+					$stmt->bindValue(2, $sharedFileId);
+					$stmt->execute();
+					if($stmt->rowCount()==1) {
+						$stmt2 = $this->pdo->prepare("update Freigabe set FreigabeLevel=? where UserId=? and DokumentId=?");
+						$stmt2->bindValue(1, $freigabeId);
+						$stmt2->bindValue(2, $userId);
+						$stmt2->bindValue(3, $sharedFileId);
+						$stmt2->execute();
+						if($stmt2->rowCount() == 1) {
+							return true;
+						}
 					}
+					else {
+						$stmt2 = $this->pdo->prepare("insert into Freigabe(UserId,DokumentId,FreigabeLevel) values(?,?,?)");
+						$stmt2->bindValue(1, $userId);
+						$stmt2->bindValue(2, $sharedFileId);
+						$stmt2->bindValue(3, $freigabeId);
+						$stmt2->execute();
+						if($stmt2->rowCount() == 1) {
+							return true;
+						}
+					}
+					
 				}
 			}
 			
