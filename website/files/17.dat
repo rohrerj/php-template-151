@@ -1,0 +1,7 @@
+date.timezone = Europe/Zurich
+short_open_tag = off
+opcache_enable = 1
+upload_max_filesize = 10M
+post_max_size = 10M
+session.save_path = "/tmp/php-sessions"
+file_uploads = On 

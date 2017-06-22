@@ -118,12 +118,25 @@ switch($uri) {
 		}
 		break;
 	}
+	case "/admin": {
+		if(isset($_SESSION["email"])) {//isLoggedIn
+			if(isset($_SESSION["accessLevel"]) && $_SESSION["accessLevel"] == "admin") {
+				$cnt = $factory->getAdminController();
+				if($_SERVER["REQUEST_METHOD"] == "GET") {
+					$cnt->showSite();
+				}
+				else {
+					$cnt->sendRequest($_POST);
+				}
+				break;
+			}
+		}
+	}
 	default:
 		$matches = [];
 		if(preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
 			$factory->GetLoginController()->greet($matches[1]);
 			break;
 		}
-		echo "Not Found";
-		echo $uri;
+		echo "Not Found ".htmlentities($uri);
 }

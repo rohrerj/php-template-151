@@ -119,7 +119,7 @@ class FileController {
 					if(file_exists($path) && is_file($path)) {
 						header('Content-Description: File Transfer');
 						header('Content-Type: application/octet-stream');
-						header('Content-Disposition: attachment; filename="'.basename($path).'"');
+						header('Content-Disposition: attachment; filename="'.basename($filename).'"');
 						header('Expires: 0');
 						header('Cache-Control: must-revalidate');
 						header('Pragma: public');

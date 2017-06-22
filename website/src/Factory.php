@@ -52,4 +52,10 @@ class Factory {
 	public function getFileService() {
 		return new service\file\FilePDOService($this->GetPDO());
 	}
+	public function getAdminController() {
+		return new Controller\AdminController($this->GetTemplateEngine(), $this->getCSRFService(),$this->getAdminService());
+	}
+	public function getAdminService() {
+		return new service\admin\AdminPDOService($this->GetPDO());
+	}
 }

@@ -1,3 +1,13 @@
+<head>
+	<style type="text/css">
+		div.lines table {
+		    border-collapse: collapse;
+		}
+		div.lines td {
+			border: 1px solid black;
+		}
+	</style>
+</head>
 <div>
 	<?php
 		if(isset($_SESSION["email"])) {
@@ -9,7 +19,7 @@
 		
 		echo "<a href='/'>Home</a>";
 		if(isset($_SESSION['accessLevel']) && $_SESSION['accessLevel'] == "admin") {
-			echo "<a href='/'>Admin</a>";
+			echo "<a href='/admin'>Admin</a>";
 		}
 		if($name == "") {
 			echo "<a href='/login'>Login</a>";
