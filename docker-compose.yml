@@ -39,6 +39,7 @@ services:
       MYSQL_DATABASE: app
       MYSQL_ROOT_PASSWORD: my-secret-pw
     volumes:
+      - ${PWD}/schema.sql:/docker-entrypoint-initdb.d/schema.sql
       - db:/var/lib/mysql
     networks:
       - db
