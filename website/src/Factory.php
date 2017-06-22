@@ -27,7 +27,7 @@ class Factory {
 		return new Controller\LoginController($this->GetTemplateEngine(),$this->GetLoginService(),$this->getCSRFService(),$this->getMailer());
 	}
 	public function GetRegisterController() {
-		return new Controller\RegisterController($this->GetTemplateEngine(), $this->GetRegisterService(),$this->getMailer(),$this->getCSRFService());
+		return new Controller\RegisterController($this->GetTemplateEngine(), $this->GetRegisterService(),$this->getMailer(),$this->getCSRFService(),$this->getFileService());
 	}
 	public function GetRegisterService() {
 		return new service\register\RegisterPDOService($this->GetPDO(),$this->getPasswordService());

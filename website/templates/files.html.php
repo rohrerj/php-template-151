@@ -7,6 +7,7 @@
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
             	document.getElementById('messageContent').innerHTML = this.responseText;
+            	location.reload();
             }
         };
         
@@ -22,12 +23,18 @@
         xhttp.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
             	document.getElementById('messageContent').innerHTML = this.responseText;
+            	location.reload();
             }
         };
         
         xhttp.open("POST", "/create", true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhttp.send(params);
+	}
+	function shareClick(dokumentId,name) {
+		document.getElementById("shareContainer").style.visibility = "visible";
+		document.getElementById("sharedFileId").value = dokumentId;
+		document.getElementById("sharedFileName").innerText = name;
 	}
 </script>
 <div style='float:left;'>
@@ -50,7 +57,7 @@ for($i=0; $i<count($files);$i++) {
 			echo "<td><input type='button' onClick='deleteClick(".$files[$i][0].")' value='delete'></td>";
 		}
 		if($files[$i][2] == "Owner") {
-			echo "<td><input type='button' value='share'></td>";
+			echo "<td><input type='button' value='share' onClick='shareClick(".$files[$i][0].",\"".$files[$i][1]."\")'></td>";
 		}
 		echo "</tr>";
 	}
@@ -60,7 +67,7 @@ for($i=0; $i<count($files);$i++) {
 			echo "<td><input type='button' onClick='deleteClick(".$files[$i][0].")' value='delete'></td>";
 		}
 		if($files[$i][2] == "Owner") {
-			echo "<td><input type='button' value='share'></td>";
+			echo "<td><input type='button' value='share' onClick='shareClick(".$files[$i][0].",\"".$files[$i][1]."\")'></td>";
 		}
 		echo "</tr>";
 	}
@@ -79,7 +86,7 @@ for($i=0; $i<count($files);$i++) {
 <div style='float:left;'>
 	<fieldset>
 		<h5>Upload File</h5>
-		<form method='POST' action="/upload" enctype="multipart/form-data">
+		<form method='POST' action="/upload" enctype="multipart/form-data" >
 			<?php echo $csrf?>
 			<input type="hidden" name="dir" value=<?php echo $dir?>>
 			<table>
@@ -93,7 +100,39 @@ for($i=0; $i<count($files);$i++) {
 		</form>
 	</fieldset>
 </div>
-
+<div style='float:left;visibility:hidden' id="shareContainer">
+	<fieldset>
+		<h5>Share File</h5>
+		<form method="POST" action="/share">
+			<input type="hidden" id="sharedFileId" name="sharedFileId">
+			<input type="hidden" name="dir" value=<?php echo $dir?>>
+			<?php echo $csrf?>
+			<table>
+				<tr>
+					<td><label>File</label></td>
+					<td><label id="sharedFileName"></label></td>
+				</tr>
+				<tr>
+					<td><label>User-Email</label></td>
+					<td><input type="text" name="sharedUserEmail"></td>
+				</tr>
+				<tr>
+					<td><label>Share Type</label></td>
+					<td>
+						<select name="sharedType">
+							<option>Read</option>
+							<option>ReadWrite</option>
+							<option>Non Share</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+				<td><input type="submit" value="share"></td>
+				</tr>
+			</table>
+			</form>
+	</fieldset>
+</div>
 
 
 

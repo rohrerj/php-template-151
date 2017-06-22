@@ -22,7 +22,7 @@ class FilePDOService implements FileService {
 		}
 	}
 	public function getFile($email,$id) {
-		$stmt = $this->pdo->prepare("select dokument.name from dokument inner join Freigabe on dokument.Id = Freigabe.DokumentId inner join user on Freigabe.UserId = user.Id inner join freigabeLevel on Freigabe.FreigabeLevel = freigabeLevel.Id where freigabeLevel.Freigabe = 'Owner' and dokument.exists='1' and dokument.name not like '/%' and user.email=? and dokument.Id=?");
+		$stmt = $this->pdo->prepare("select dokument.name from dokument inner join Freigabe on dokument.Id = Freigabe.DokumentId inner join user on Freigabe.UserId = user.Id inner join freigabeLevel on Freigabe.FreigabeLevel = freigabeLevel.Id where dokument.exists='1' and dokument.name not like '/%' and user.email=? and dokument.Id=?");
 		$stmt->bindValue(1, $email);
 		$stmt->bindValue(2, $id);
 		$stmt->execute();
@@ -35,7 +35,7 @@ class FilePDOService implements FileService {
 	}
 	public function uploadFile($email,$name,$dir) {
 		if($this->directoryExists($dir)) {
-			if($this->checkAccess($email, $dir, "Owner") || $this->checkAccess($email, $dir, "Owner") == "ReadWrite") {
+			if($this->checkDirAccess($email, $dir, "Owner") || $this->checkDirAccess($email, $dir, "Owner") == "ReadWrite") {
 				if(!$this->fileExists($name,$dir)) {
 					try {
 						$this->pdo->beginTransaction();
@@ -117,7 +117,78 @@ class FilePDOService implements FileService {
 		}
 		
 	}
-	private function checkAccess($email,$path,$access) {
+	public function createRootFolder($email) {
+		$stmt = $this->pdo->prepare("select Name from dokument where name = ?");
+		$stmt->bindValue(1, "/".$email);
+		$stmt->execute();
+		if($stmt->rowCount() == 0) {
+			try {
+				$this->pdo->beginTransaction();
+	
+				$stmt2 = $this->pdo->prepare("insert into dokument(Name,Directory) values(?,'/')");
+				$stmt2->bindValue(1, "/".$email);
+				$stmt2->execute();
+				
+				$dokumentId = $this->pdo->lastInsertId();
+				$userId = $this->getUserIdForEmail($email);
+				$freigabeId = $this->getFreigabeIdForName("Owner");
+				
+				$stmt3 = $this->pdo->prepare("insert into Freigabe (DokumentId,UserId,FreigabeLevel) values(?,?,?)");
+				$stmt3->bindValue(1, $dokumentId);
+				$stmt3->bindValue(2, $userId);
+				$stmt3->bindValue(3, $freigabeId);
+				$stmt3->execute();
+	
+				$this->pdo->commit();
+			}
+			catch(Exception $ex) {
+				$this->pdo->rollBack();
+			}
+		}
+	}
+	public function share($email,$sharedFileId,$sharedUserEmail,$sharedType) {
+		if($this->checkFileAccess($email, $sharedFileId, "Owner")) {
+			$userId = $this->getUserIdForEmail($sharedUserEmail);
+			$freigabeId = $this->getFreigabeIdForName($sharedType);
+			if($userId != 0) {
+				$stmt = $this->pdo->prepare("select Id from Freigabe where UserId=? and DokumentId=?");
+				$stmt->bindValue(1, $userId);
+				$stmt->bindValue(2, $sharedFileId);
+				$stmt->execute();
+				if($stmt->rowCount()==1) {
+					$stmt2 = $this->pdo->prepare("update Freigabe set FreigabeLevel=? where UserId=? and DokumentId=?");
+					$stmt2->bindValue(1, $freigabeId);
+					$stmt2->bindValue(2, $userId);
+					$stmt2->bindValue(3, $sharedFileId);
+					$stmt2->execute();
+					if($stmt2->rowCount() == 1) {
+						return true;
+					}
+				}
+				else {
+					$stmt2 = $this->pdo->prepare("insert into Freigabe(UserId,DokumentId,FreigabeLevel) values(?,?,?)");
+					$stmt2->bindValue(1, $userId);
+					$stmt2->bindValue(2, $sharedFileId);
+					$stmt2->bindValue(3, $freigabeId);
+					$stmt2->execute();
+					if($stmt2->rowCount() == 1) {
+						return true;
+					}
+				}
+			}
+			
+		}
+	}
+	private function checkFileAccess($email,$docId,$access) {
+		$stmt = $this->pdo->prepare("select user.Id from freigabeLevel inner join Freigabe on Freigabe.freigabeLevel = freigabeLevel.Id inner join dokument on dokument.Id = Freigabe.DokumentId inner join user on user.Id = Freigabe.UserId where user.Email = ? and freigabeLevel.Freigabe=? and dokument.Id = ?");
+		$stmt->bindValue(1, $email);
+		$stmt->bindValue(2, $access);
+		$stmt->bindValue(3, $docId);
+		$stmt->execute();
+		return $stmt->rowCount()==1;
+	}
+	//use this method only to check access for directorys
+	private function checkDirAccess($email,$path,$access) {
 		$stmt = $this->pdo->prepare("select user.Id from freigabeLevel inner join Freigabe on Freigabe.freigabeLevel = freigabeLevel.Id inner join dokument on dokument.Id = Freigabe.DokumentId inner join user on user.Id = Freigabe.UserId where user.Email = ? and freigabeLevel.Freigabe=? and dokument.Name = ?");
 		$stmt->bindValue(1, $email);
 		$stmt->bindValue(2, $access);
@@ -153,6 +224,7 @@ class FilePDOService implements FileService {
 		if($stmt->rowCount()==1) {
 			return $stmt->fetch($this->pdo::FETCH_NUM, $this->pdo::FETCH_ORI_NEXT)[0];
 		}
+		return 0;
 	}
 	public function deleteFile($email, $file) {
 		$result = $this->checkType($email,$file);

@@ -7,4 +7,6 @@ interface FileService {
 	public function deleteFile($email,$file);
 	public function uploadFile($email,$name,$dir);
 	public function createFolder($email,$name,$dir);
+	public function createRootFolder($email);
+	public function share($email,$sharedFileId,$sharedUserEmail,$sharedType);
 }

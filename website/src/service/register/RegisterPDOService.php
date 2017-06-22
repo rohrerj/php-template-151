@@ -21,6 +21,7 @@ class RegisterPDOService implements RegisterService {
 		}
 		return null;
 	}
+	
 	private function userNotExist($email) {
 		$stmt = $this->pdo->prepare("SELECT Email FROM user WHERE email=?");
 		$stmt->bindValue(1, $email);

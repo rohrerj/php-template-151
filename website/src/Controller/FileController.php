@@ -141,4 +141,39 @@ class FileController {
 			echo "not logged in";
 		}
 	}
+	public function share(array $data) {
+		if(array_key_exists("csrf", $data)) {
+			if(!$this->csrfService->validateToken("csrfShowFiles", $data["csrf"])) {
+				echo "invalid csrf token";
+				return;
+			}
+		}
+		else {
+			echo "csrf token not set";
+			return;
+		}
+		if($_SESSION["email"] != null) {
+			if(array_key_exists("dir",$data) && $data["dir"]!="" && array_key_exists("sharedFileId",$data) && $data["sharedFileId"]!="" && array_key_exists("sharedUserEmail",$data) && $data["sharedUserEmail"]!="" && array_key_exists("sharedType",$data) && $data["sharedType"]!="") {
+				$sharedType = $data["sharedType"];
+				switch($sharedType) {
+					case "Read":
+					case "ReadWrite": {
+						break;
+					}
+					default: {
+						return;
+					}
+				}
+				if($this->fileService->share($_SESSION["email"],$data["sharedFileId"],$data["sharedUserEmail"],$data["sharedType"])) {
+					header("Location: /?dir=".$data["dir"]);
+				}
+			}
+			
+		}
+	}
 }
+
+
+
+
+

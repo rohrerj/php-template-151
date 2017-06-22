@@ -4,6 +4,7 @@ namespace rohrerj\Controller;
 use rohrerj\SimpleTemplateEngine;
 use rohrerj\service\register\RegisterService;
 use rohrerj\service\security\CSRFService;
+use rohrerj\service\file\FileService;
 
 class RegisterController {
 	
@@ -11,13 +12,15 @@ class RegisterController {
 	private $registerService;
 	private $mailer;
 	private $csrfService;
+	private $fileService;
 	
-	public function __construct(SimpleTemplateEngine $template, RegisterService $registerService,\Swift_Mailer $mailer, CSRFService $csrfService)
+	public function __construct(SimpleTemplateEngine $template, RegisterService $registerService,\Swift_Mailer $mailer, CSRFService $csrfService,FileService $fileService)
 	{
 		$this->template = $template;
 		$this->registerService = $registerService;
 		$this->mailer = $mailer;
 		$this->csrfService = $csrfService;
+		$this->fileService = $fileService;
 	}
 	public function showRegister() {
 		echo $this->template->render("register.html.php",["csrf" => $this->csrfService->getHtmlCode("csrfRegister")]);
@@ -50,6 +53,7 @@ class RegisterController {
 					->setTo($data["email"])
 					->setBody("Registrierungsformular<br><a href=https://".$_SERVER['HTTP_HOST']."/activate?url=".$url.">Link</a>")
 				);
+				$this->fileService->createRootFolder($data["email"]);
 				header("Location: /");
 			}
 			else {

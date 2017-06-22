@@ -109,6 +109,15 @@ switch($uri) {
 		}
 		break;
 	}
+	case "/share": {
+		if(isset($_SESSION["email"])) {//isLoggedIn
+			$cnt = $factory->getFileController();
+			if($_SERVER["REQUEST_METHOD"] == "POST") {
+				$cnt->share($_POST);
+			}
+		}
+		break;
+	}
 	default:
 		$matches = [];
 		if(preg_match("|^/hello/(.+)$|", $_SERVER["REQUEST_URI"], $matches)) {
